@@ -281,14 +281,11 @@ int main(int argc, char *argv[]){
     
     int matgen[length];
     int trav = 0;
-    for (int num = fgetc(nums); num != EOF; num = fgetc(nums)){
-        if (isdigit(num)){
-            matgen[trav] = (int)num;
-            trav++;
-        }
-        else {
-            trav = trav;
-        }
+    
+    while (fgets(line, sizeof(line), nums) != NULL){
+        int new = atoi(line);
+        matgen[trav] = new;
+        trav++;
     }
     
     // Matrices are arrays of rows
@@ -347,6 +344,7 @@ int main(int argc, char *argv[]){
     free(matrixA);
     free(matrixB);
 }
+
 
 
     /*
