@@ -260,93 +260,66 @@ int** strassen(int n, int** A, int** B){
 
 
 int main(int argc, char *argv[]){
-    int *input = argv[1];
-
+    int dimension = atoi(argv[2]);
+    
+    int *input = argv[3];
+    
     FILE *matrices = fopen(input, "r");
     if (matrices == NULL){
-      fprintf(stderr, "Could not open file");
-      exit(1);
+        fprintf(stderr, "Could not open file");
+        exit(1);
     }
-
-    int rowcount, colcount;
-    rowcount = colcount = 0;
-
-    while ((ch = getc(matrices)) != EOF)
-    {
-      if (ch == "\n"){
-        rowcount++;
-        colcount++
-      }
-    }
-
+    
     fseek(matrices, 0, SEEK_SET);
-
-    // Matrices are arrays of rows
-    int **matrixA = malloc(sizeof(int *) * rowcount);
-    int **matrixB = malloc(sizeof(int *) * rowcount);
-
+    
     if (rowcount % 2 = 0){
-      n = rowcount;
-      for (int i = 0; i < rowcount; i++){
-        int *newrowA = malloc(sizeof(int)*colcount);
-        int *newrowB = malloc(sizeof(int)*colcount);
-
-        // should be character size of thing
-        fread(newrowA, sizeof(int), colcount, matrices);
-        matrixA[i] = newrowA;
-
-        fread(newrowB, sizeof(int), colcount, matrices);
-        matrixB[i] = newrowB;
-
-        free(newrowA);
-        free(newrowB);
-      }
+        n = dimension;
+        // Matrices are arrays of rows
+        int **matrixA = makematrix(n);
+        int **matrixB = makematrix(n);
     }
-
+    
     else {
-      n = rowcount+1;
-      for (int i = 0; i < rowcount; i++){
-        int *newrowA = malloc(sizeof(int)*colcount+1);
-        int *newrowB = malloc(sizeof(int)*colcount+1);
-
-        // should be character size of thing
-        fread(newrowA, sizeof(int), colcount, matrices);
-        newrowA[colcount] = 0;
-        matrixA[i] = newrowA;
-
-        fread(newrowB, sizeof(int), colcount, matrices);
-        newrowB[colcount] = 0;
-        matrixB[i] = newrowB;
-
-        free(newrowA);
-        free(newrowB);
-      }
-
-      // padding
-      int *newrowA = malloc(sizeof(int)*colcount);
-      int *newrowB = malloc(sizeof(int)*colcount);
-
-      for (int j = 0; j < colcount; j++){
-        newrowA[j] = 0;
-        newrowB[j] = 0;
-      }
-
-      matrixA[rowcount] = newrowA;
-      matrixB[rowcount] = newrowB;
-
-      free(newrowA);
-      free(newrowB);
+        // padding
+        n = dimension+1;
+        // Matrices are arrays of rows
+        int **matrixA = makematrix(n);
+        int **matrixB = makematrix(n);
     }
-
+    
     int** C = makematrix(n);
+    
+    clock_t start, finish;
+    double strasstime;
+    double conventime;
+    
+    start = clock();
     C = strassen(n, matrixA, matrixB);
-
-    for(int t = 0; t < n; t++){
-        for(int s = 0; s < n; s++){
-            printf("%i \n", C[t][s]);
-        }
+    finish = clock();
+    
+    strasstime = (double)(finish - start) / CLOCKS_PER_SEC;
+    
+    start = clock()
+    matrixmult(n, matrixA, matrixB, C);
+    finish = clock()
+    
+    conventime = (double)(finish - start) / CLOCKS_PER_SEC;
+    
+    printf("dim \t strassen \t conventional \n");
+    for (int dim = 1, dim <= n, dim *= 2){
+        start = clock();
+        C = strassen(dim, matrixA, matrixB);
+        finish = clock();
+        strasstime = (double)(finish - start) / CLOCKS_PER_SEC;
+        
+        start = clock()
+        matrixmult(dim, matrixA, matrixB, C);
+        finish = clock()
+        conventime = (double)(finish - start) / CLOCKS_PER_SEC;
+        
+        printf("%i \t %i \t %i \n", dim, strasstime, conventime);
     }
-  }
+}
 
 
     /*
