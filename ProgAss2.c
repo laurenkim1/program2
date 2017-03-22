@@ -258,9 +258,8 @@ int** strassen(int n, int** A, int** B){
     return C;
 }
 
-
 int main(int argc, char *argv[]){
-    int dimension = atoi(argv[2]);
+    int n = atoi(argv[2]);
     
     int *input = argv[3];
     
@@ -270,24 +269,11 @@ int main(int argc, char *argv[]){
         exit(1);
     }
     
-    fseek(matrices, 0, SEEK_SET);
+    // Matrices are arrays of rows
+    int** matrixA = makematrix(n);
+    int** matrixB = makematrix(n);
     
-    if (rowcount % 2 = 0){
-        n = dimension;
-        // Matrices are arrays of rows
-        int **matrixA = makematrix(n);
-        int **matrixB = makematrix(n);
-    }
-    
-    else {
-        // padding
-        n = dimension+1;
-        // Matrices are arrays of rows
-        int **matrixA = makematrix(n);
-        int **matrixB = makematrix(n);
-    }
-    
-    int** C = makematrix(dimension);
+    int** C = makematrix(n);
     
     clock_t start, finish;
     double strasstime;
