@@ -279,7 +279,7 @@ int main(int argc, char *argv[]){
     
     fseek(nums, 0, SEEK_SET);
     
-    int matgen[length+1];
+    int matgen[length];
     int trav = 0;
     for (int num = fgetc(nums); num != EOF; num = fgetc(nums)){
         if (isdigit(num)){
