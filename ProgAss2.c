@@ -170,7 +170,7 @@ int** strassen(int n, int** A, int** B){
     int d;
     
     // cutoff
-    if (n == 1){
+    if (n <= 32){
         matrixmult(n, A, B, C);
         return C;
     }
