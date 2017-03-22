@@ -271,7 +271,7 @@ int main(int argc, char *argv[]){
     }
     
     int length = 0;
-    for (int c = fgetc(nums); c != EOF; c = fgetc(fp)){
+    for (int c = fgetc(nums); c != EOF; c = fgetc(nums)){
         if (isdigit(c)){
             length ++;
         }
@@ -284,7 +284,7 @@ int main(int argc, char *argv[]){
     
     int matgen[length];
     int trav = 0;
-    for (int num = fgetc(nums); num != EOF; num = fgetc(fp)){
+    for (int num = fgetc(nums); num != EOF; num = fgetc(nums)){
         if (isdigit(num)){
             matgen[trav] = atoi(num);
             trav++;
@@ -326,26 +326,29 @@ int main(int argc, char *argv[]){
     
     strasstime = (double)(finish - start) / CLOCKS_PER_SEC;
     
-    start = clock()
+    start = clock();
     matrixmult(n, matrixA, matrixB, C);
-    finish = clock()
+    finish = clock();
     
     conventime = (double)(finish - start) / CLOCKS_PER_SEC;
     
     printf("dim \t strassen \t conventional \n");
-    for (int dim = 1, dim <= n, dim *= 2){
+    for (int dim = 1; dim <= n; dim *= 2){
         start = clock();
         C = strassen(dim, matrixA, matrixB);
         finish = clock();
         strasstime = (double)(finish - start) / CLOCKS_PER_SEC;
         
-        start = clock()
+        start = clock();
         matrixmult(dim, matrixA, matrixB, C);
-        finish = clock()
+        finish = clock();
         conventime = (double)(finish - start) / CLOCKS_PER_SEC;
         
         printf("%i \t %i \t %i \n", dim, strasstime, conventime);
     }
+    
+    free(matrixA);
+    free(matrixB);
 }
 
 
