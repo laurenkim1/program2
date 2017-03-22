@@ -263,9 +263,7 @@ int** strassen(int n, int** A, int** B){
 int main(int argc, char *argv[]){
     int n = atoi(argv[2]);
     
-    int *input = argv[3];
-    
-    FILE *nums = fopen(input, "r");
+    FILE *nums = fopen(argv[3], "r");
     if (nums == NULL){
         fprintf(stderr, "Could not open file");
         exit(1);
