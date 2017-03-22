@@ -258,20 +258,61 @@ int** strassen(int n, int** A, int** B){
     return C;
 }
 
+
 int main(int argc, char *argv[]){
     int n = atoi(argv[2]);
     
     int *input = argv[3];
     
-    FILE *matrices = fopen(input, "r");
-    if (matrices == NULL){
+    FILE *nums = fopen(input, "r");
+    if (nums == NULL){
         fprintf(stderr, "Could not open file");
         exit(1);
+    }
+    
+    int length = 0;
+    for (int c = fgetc(nums); c != EOF; c = fgetc(fp)){
+        if (isdigit(c)){
+            length ++;
+        }
+        else {
+            length = length;
+        }
+    }
+    
+    fseek(nums, 0, SEEK_SET);
+    
+    int matgen[length];
+    int trav = 0;
+    for (int num = fgetc(nums); num != EOF; num = fgetc(fp)){
+        if (isdigit(num)){
+            matgen[trav] = atoi(num);
+            trav++;
+        }
+        else {
+            trav = trav;
+        }
     }
     
     // Matrices are arrays of rows
     int** matrixA = makematrix(n);
     int** matrixB = makematrix(n);
+    
+    // seed for random index generator for generating random matrix from list
+    time_t seconds;
+    time(&seconds);
+    srand((unsigned int) seconds);
+    
+    int randindex = 0;
+    
+    for (int rows = 0; rows < n; rows ++){
+        for (int cols = 0; cols < n; cols++){
+            randindex = rand() % length;
+            matrixA[rows][cols] = matgen[randindex];
+            randindex = rand() % length;
+            matrixB[rows][cols] = matgen[randindex];
+        }
+    }
     
     int** C = makematrix(n);
     
