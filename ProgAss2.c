@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <time.h>
 
 int** makematrix(int n){
@@ -270,23 +271,19 @@ int main(int argc, char *argv[]){
         exit(1);
     }
     
+    char line[100];
     int length = 0;
-    for (int c = fgetc(nums); c != EOF; c = fgetc(nums)){
-        if (isdigit(c)){
-            length ++;
-        }
-        else {
-            length = length;
-        }
+    while (fgets(line, sizeof(line), nums) != NULL){
+        length++;
     }
     
     fseek(nums, 0, SEEK_SET);
     
-    int matgen[length];
+    int matgen[length+1];
     int trav = 0;
     for (int num = fgetc(nums); num != EOF; num = fgetc(nums)){
         if (isdigit(num)){
-            matgen[trav] = atoi(num);
+            matgen[trav] = (int)num;
             trav++;
         }
         else {
@@ -344,7 +341,7 @@ int main(int argc, char *argv[]){
         finish = clock();
         conventime = (double)(finish - start) / CLOCKS_PER_SEC;
         
-        printf("%i \t %i \t %i \n", dim, strasstime, conventime);
+        printf("%i \t %f \t %f \n", dim, strasstime, conventime);
     }
     
     free(matrixA);
