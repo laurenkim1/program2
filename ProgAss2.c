@@ -287,7 +287,7 @@ int main(int argc, char *argv[]){
         int **matrixB = makematrix(n);
     }
     
-    int** C = makematrix(n);
+    int** C = makematrix(dimension);
     
     clock_t start, finish;
     double strasstime;
