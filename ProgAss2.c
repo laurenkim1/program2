@@ -33,35 +33,29 @@ void matrixmult(int n, int** A, int** B, int** C){
 }
 
 int** matrixadd(int n, int** A, int** B){
-    int **C = makematrix(n);
-    int a = 0;
-    int b = 0;
-    int sum = 0;
+    int **sum = makematrix(n);
     
     int rowtrav;
     int coltrav;
     for (rowtrav = 0; rowtrav < n; rowtrav++){
         for (coltrav = 0; coltrav < n; coltrav++){
-            a = A[rowtrav][coltrav];
-            b = B[rowtrav][coltrav];
-            sum = a + b;
-            C[rowtrav][coltrav] = sum;
+            sum[rowtrav][coltrav] = A[rowtrav][coltrav] + B[rowtrav][coltrav];
         }
     }
-    return C;
+    return sum;
 }
 
 int** matrixsubtract(int n, int** A, int** B){
-    int** C = makematrix(n);
+    int** diff = makematrix(n);
     
     int rowtrav;
     int coltrav;
     for (rowtrav = 0; rowtrav < n; rowtrav++){
         for (coltrav = 0; coltrav < n; coltrav++){
-            C[rowtrav][coltrav] = A[rowtrav][coltrav] - B[rowtrav][coltrav];
+            diff[rowtrav][coltrav] = A[rowtrav][coltrav] - B[rowtrav][coltrav];
         }
     }
-    return C;
+    return diff;
 }
 
 void split1(int d, int** m, int** m1){
@@ -231,15 +225,12 @@ int** strassen(int n, int** A, int** B){
     int** C3 = makematrix(d);
     int** C4 = makematrix(d);
     
-    C1 = matrixadd(d, p5, matrixsubtract(d, p4, matrixadd(d, p2, p6)));
+    C1 = matrixadd(d, p5, matrixadd(d, p6, matrixsubtract(d, p4, p2)));
     C2 = matrixadd(d, p1, p2);
     C3 = matrixadd(d, p3, p4);
-    C4 = matrixadd(d, p5, matrixsubtract(d, p1, matrixsubtract(d, p3, p7)));
+    C4 = matrixsubtract(d, matrixadd(d, p5, p1), matrixadd(d, p3, p7));
     
     join(d, pad, C, C1, C2, C3, C4);
-    
-    free(A);
-    free(B);
     
     free(p1);
     free(p2);
