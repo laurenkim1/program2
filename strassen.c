@@ -66,7 +66,7 @@ void matrixmult(int n, int** A, int** B, int** C){
         for (trav = 0; trav < n; trav++){
             temp = 0;
             for (rowtravA = 0; rowtravA < n; rowtravA++){
-                temp += A[trav][temptravA]*Bcol[rowtravA];
+                temp += A[trav][rowtravA]*Bcol[rowtravA];
             }
             C[trav][coltravB] = temp;
         }
