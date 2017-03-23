@@ -47,7 +47,7 @@ void matrixmult(int n, int** A, int** B, int** C){
         }
     }
 }
- 
+
 */
 
 void matrixmult(int n, int** A, int** B, int** C){
@@ -56,9 +56,9 @@ void matrixmult(int n, int** A, int** B, int** C){
     int coltravA;
     int trav;
     int temp;
-    
+
     int Bcol[n];
-    
+
     for (coltravB = 0; coltravB < n; coltravB++){
         for (rowtravB = 0; rowtravB < n; rowtravB++){
             Bcol[rowtravB] = B[rowtravB][coltravB];
@@ -68,7 +68,7 @@ void matrixmult(int n, int** A, int** B, int** C){
             for (coltravA = 0; coltravA < n; coltravA++){
                 temp += A[trav][coltravA]*Bcol[coltravA];
             }
-            C[coltravB][trav] = temp;
+            C[trav][coltravB] = temp;
         }
     }
 }
@@ -76,7 +76,7 @@ void matrixmult(int n, int** A, int** B, int** C){
 
 int** matrixadd(int n, int** A, int** B){
     int **sum = makematrix(n);
-    
+
     int rowtrav;
     int coltrav;
     for (rowtrav = 0; rowtrav < n; rowtrav++){
@@ -89,7 +89,7 @@ int** matrixadd(int n, int** A, int** B){
 
 int** matrixsubtract(int n, int** A, int** B){
     int** diff = makematrix(n);
-    
+
     int rowtrav;
     int coltrav;
     for (rowtrav = 0; rowtrav < n; rowtrav++){
@@ -172,7 +172,7 @@ void split4(int d, int pad, int** m, int** m4){
 void join(int d, int pad, int** m, int** m1, int** m2, int** m3, int** m4){
     int n;
     int rows, cols;
-    
+
     if (pad == 0){
         n = 2*d;
         for (rows = 0; rows < d; rows++){
@@ -209,43 +209,43 @@ int** strassen(int n, int** A, int** B){
     int** C = makematrix(n);
     int pad;
     int d;
-    
+
     // cutoff
     if (n <= 32){
         matrixmult(n, A, B, C);
         return C;
     }
-    
+
     if (n % 2 == 1) {
         d = (n+1)/2;
         pad = 1;
     }
-    
+
     if (n % 2 == 0){
         d = n/2;
         pad = 0;
     }
-    
+
     int** A1 = makematrix(d);
     int** A2 = makematrix(d);
     int** A3 = makematrix(d);
     int** A4 = makematrix(d);
-    
+
     int** B1 = makematrix(d);
     int** B2 = makematrix(d);
     int** B3 = makematrix(d);
     int** B4 = makematrix(d);
-    
+
     split1(d, A, A1);
     split2(d, pad, A, A2);
     split3(d, pad, A, A3);
     split4(d, pad, A, A4);
-    
+
     split1(d, B, B1);
     split2(d, pad, B, B2);
     split3(d, pad, B, B3);
     split4(d, pad, B, B4);
-    
+
     int** p1 = makematrix(d);
     int** p2 = makematrix(d);
     int** p3 = makematrix(d);
@@ -253,7 +253,7 @@ int** strassen(int n, int** A, int** B){
     int** p5 = makematrix(d);
     int** p6 = makematrix(d);
     int** p7 = makematrix(d);
-    
+
     p1 = strassen(d, A1, matrixsubtract(d, B2, B4));
     p2 = strassen(d, matrixadd(d, A1, A2), B4);
     p3 = strassen(d, matrixadd(d, A3, A4), B1);
@@ -261,19 +261,19 @@ int** strassen(int n, int** A, int** B){
     p5 = strassen(d, matrixadd(d, A1, A4), matrixadd(d, B1, B4));
     p6 = strassen(d, matrixsubtract(d, A2, A4), matrixadd(d, B3, B4));
     p7 = strassen(d, matrixsubtract(d, A1, A3), matrixadd(d, B1, B2));
-    
+
     int** C1 = makematrix(d);
     int** C2 = makematrix(d);
     int** C3 = makematrix(d);
     int** C4 = makematrix(d);
-    
+
     C1 = matrixadd(d, p5, matrixadd(d, p6, matrixsubtract(d, p4, p2)));
     C2 = matrixadd(d, p1, p2);
     C3 = matrixadd(d, p3, p4);
     C4 = matrixsubtract(d, matrixadd(d, p5, p1), matrixadd(d, p3, p7));
-    
+
     join(d, pad, C, C1, C2, C3, C4);
-    
+
     free(p1);
     free(p2);
     free(p3);
@@ -281,25 +281,24 @@ int** strassen(int n, int** A, int** B){
     free(p5);
     free(p6);
     free(p7);
-    
+
     free(A1);
     free(A2);
     free(A3);
     free(A4);
-    
+
     free(B1);
     free(B2);
     free(B3);
     free(B4);
-    
+
     free(C1);
     free(C2);
     free(C3);
     free(C4);
-    
+
     return C;
 }
-
 
 int main(int argc, char *argv[]){
     int n = atoi(argv[2]);
@@ -383,8 +382,7 @@ int main(int argc, char *argv[]){
 
 
 
-    /*
-
+/*
   int main(void){
       int n = 4;
 
@@ -426,7 +424,7 @@ int main(int argc, char *argv[]){
       B[3][3] = 8;
 
       int** C = makematrix(n);
-      C = strassen(n, A, B);
+      matrixmult(n, A, B, C);
 
       for(int t = 0; t < n; t++){
           for(int s = 0; s < n; s++){
@@ -434,5 +432,4 @@ int main(int argc, char *argv[]){
           }
       }
   }
-
   */
