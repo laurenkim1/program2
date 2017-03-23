@@ -231,7 +231,7 @@ int** strassen(int n, int** A, int** B, int** Cquad){
     int d;
 
     // cutoff
-    if (n <= 64){
+    if (n <= 128){
         matrixmult(n, A, B, C);
         return C;
     }
