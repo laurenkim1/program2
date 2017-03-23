@@ -167,23 +167,27 @@ void split4(int d, int pad, int** m, int** m4){
 
 void join(int d, int pad, int quad, int** m, int** mquad){
     int n;
-    int rows, cols;
+    int rows, cols, help;
+    int mhelp[d];
 
     if (pad == 0){
         n = 2*d;
         for (rows = 0; rows < d; rows++){
+            for (help = 0; help < d; help++){
+                mhelp[help] = mquad[rows][help];
+            }
             for (cols = 0; cols < d; cols++){
                 if (quad == 1){
-                    m[rows][cols] = mquad[rows][cols];
+                    m[rows][cols] = mhelp[cols];
                 }
                 else if (quad == 2){
-                    m[rows][cols+d] = mquad[rows][cols];
+                    m[rows][cols+d] = mhelp[cols];
                 }
                 else if (quad == 3){
-                    m[rows+d][cols] = mquad[rows][cols];
+                    m[rows+d][cols] = mhelp[cols];
                 }
                 else {
-                    m[rows+d][cols+d] = mquad[rows][cols];
+                    m[rows+d][cols+d] = mhelp[cols];
                 }
             }
         }
@@ -227,7 +231,7 @@ int** strassen(int n, int** A, int** B, int** Cquad){
     int d;
 
     // cutoff
-    if (n <= 460){
+    if (n <= 400){
         matrixmult(n, A, B, C);
         return C;
     }
