@@ -74,8 +74,7 @@ void matrixmult(int n, int** A, int** B, int** C){
 }
 
 
-int** matrixadd(int n, int** A, int** B){
-    int **sum = makematrix(n);
+void matrixadd(int n, int** A, int** B, int** sum){
 
     int rowtrav;
     int coltrav;
@@ -84,11 +83,9 @@ int** matrixadd(int n, int** A, int** B){
             sum[rowtrav][coltrav] = A[rowtrav][coltrav] + B[rowtrav][coltrav];
         }
     }
-    return sum;
 }
 
-int** matrixsubtract(int n, int** A, int** B){
-    int** diff = makematrix(n);
+void matrixsubtract(int n, int** A, int** B, int** diff){
 
     int rowtrav;
     int coltrav;
@@ -97,7 +94,6 @@ int** matrixsubtract(int n, int** A, int** B){
             diff[rowtrav][coltrav] = A[rowtrav][coltrav] - B[rowtrav][coltrav];
         }
     }
-    return diff;
 }
 
 void split1(int d, int** m, int** m1){
@@ -231,7 +227,7 @@ int** strassen(int n, int** A, int** B, int** Cquad){
     int d;
 
     // cutoff
-    if (n <= 128){
+    if (n <= 460){
         matrixmult(n, A, B, C);
         return C;
     }
@@ -273,22 +269,46 @@ int** strassen(int n, int** A, int** B, int** Cquad){
     int** p5 = makematrix(d);
     int** p6 = makematrix(d);
     int** p7 = makematrix(d);
+    int** phelp = makematrix(d);
+    
+    matrixsubtract(d, B2, B4, p1);
+    p1 = strassen(d, A1, p1, Cquad);
+    
+    matrixadd(d, A1, A2, p2);
+    p2 = strassen(d, p2, B4, Cquad);
+    
+    matrixadd(d, A3, A4, p3);
+    p3 = strassen(d, p3, B1, Cquad);
+    
+    matrixsubtract(d, B3, B1, p4);
+    p4 = strassen(d, A4, p4, Cquad);
+    
+    matrixadd(d, A1, A4, p5);
+    matrixadd(d, B1, B4, phelp);
+    p5 = strassen(d, p5, phelp, Cquad);
+    
+    matrixsubtract(d, A2, A4, p6);
+    matrixadd(d, B3, B4, phelp);
+    p6 = strassen(d, p6, phelp, Cquad);
+    
+    matrixsubtract(d, A1, A3, p7);
+    matrixadd(d, B1, B2, phelp);
+    p7 = strassen(d, p7, phelp, Cquad);
 
-    p1 = strassen(d, A1, matrixsubtract(d, B2, B4), Cquad);
-    p2 = strassen(d, matrixadd(d, A1, A2), B4, Cquad);
-    p3 = strassen(d, matrixadd(d, A3, A4), B1, Cquad);
-    p4 = strassen(d, A4, matrixsubtract(d, B3, B1), Cquad);
-    p5 = strassen(d, matrixadd(d, A1, A4), matrixadd(d, B1, B4), Cquad);
-    p6 = strassen(d, matrixsubtract(d, A2, A4), matrixadd(d, B3, B4), Cquad);
-    p7 = strassen(d, matrixsubtract(d, A1, A3), matrixadd(d, B1, B2), Cquad);
-
-    Cquad = matrixadd(d, p5, matrixadd(d, p6, matrixsubtract(d, p4, p2)));
+    matrixsubtract(d, p4, p2, Cquad);
+    matrixadd(d, p6, Cquad, p6);
+    matrixadd(d, p5, p6, Cquad);
     join(d, pad, 1, C, Cquad);
-    Cquad = matrixadd(d, p1, p2);
+    
+    matrixadd(d, p1, p2, Cquad);
     join(d, pad, 2, C, Cquad);
-    Cquad = matrixadd(d, p3, p4);
+    
+    matrixadd(d, p3, p4, Cquad);
     join(d, pad, 3, C, Cquad);
-    Cquad = matrixsubtract(d, matrixadd(d, p5, p1), matrixadd(d, p3, p7));
+    
+    matrixadd(d, p5, p1, p5);
+    matrixadd(d, p3, p7, p7);
+    matrixsubtract(d, p5, p7, Cquad);
     join(d, pad, 4, C, Cquad);
 
     free(p1);
@@ -298,6 +318,7 @@ int** strassen(int n, int** A, int** B, int** Cquad){
     free(p5);
     free(p6);
     free(p7);
+    free(phelp);
 
     free(A1);
     free(A2);
@@ -308,8 +329,6 @@ int** strassen(int n, int** A, int** B, int** Cquad){
     free(B2);
     free(B3);
     free(B4);
-
-    free(Cquad);
 
     return C;
 }
@@ -367,9 +386,10 @@ int main(int argc, char *argv[]){
         clock_t start, finish;
         double strasstime;
         double conventime;
+        int compare;
 
-        printf("dim \t strassen \t conventional \n");
-        for (int dim = 1; dim <= n; dim *= 2){
+        printf("dim \t strassen \t conventional \t strasfaster\n");
+        for (int dim = n-20; dim <= n; dim++){
             start = clock();
             C = strassen(dim, matrixA, matrixB, Cquad);
             finish = clock();
@@ -379,8 +399,15 @@ int main(int argc, char *argv[]){
             matrixmult(dim, matrixA, matrixB, C);
             finish = clock();
             conventime = (double)(finish - start) / CLOCKS_PER_SEC;
+            
+            if (strasstime > conventime){
+                compare = 1;
+            }
+            else{
+                compare = 0;
+            }
 
-            printf("%i \t %f \t %f \n", dim, strasstime, conventime);
+            printf("%i \t %f \t %f \t %i \n", dim, strasstime, conventime, compare);
       }
     }
     // print diagonal entries with newlines
