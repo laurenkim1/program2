@@ -169,7 +169,7 @@ void split4(int d, int pad, int** m, int** m4){
     }
 }
 
-void join(int d, int pad, int** m, int** m1, int** m2, int** m3, int** m4){
+void join(int d, int pad, int quad, int** m, int** mquad){
     int n;
     int rows, cols;
 
@@ -177,29 +177,49 @@ void join(int d, int pad, int** m, int** m1, int** m2, int** m3, int** m4){
         n = 2*d;
         for (rows = 0; rows < d; rows++){
             for (cols = 0; cols < d; cols++){
-                m[rows][cols] = m1[rows][cols];
-                m[rows][cols+d] = m2[rows][cols];
-                m[rows+d][cols] = m3[rows][cols];
-                m[rows+d][cols+d] = m4[rows][cols];
+                if (quad == 1){
+                    m[rows][cols] = mquad[rows][cols];
+                }
+                else if (quad == 2){
+                    m[rows][cols+d] = mquad[rows][cols];
+                }
+                else if (quad == 3){
+                    m[rows+d][cols] = mquad[rows][cols];
+                }
+                else {
+                    m[rows+d][cols+d] = mquad[rows][cols];
+                }
             }
         }
     }
     else {
         n = 2*d - 1;
-        for (rows = 0; rows < d; rows++){
-            for (cols = 0; cols < d; cols++){
-                m[rows][cols] = m1[rows][cols];
-            }
-            for (cols = d; cols < n; cols++){
-                m[rows][cols] = m2[rows][cols - d];
+        if (quad == 1){
+            for (rows = 0; rows < d; rows++){
+                for (cols = 0; cols < d; cols++){
+                    m[rows][cols] = mquad[rows][cols];
+                }
             }
         }
-        for (rows = d; rows < n; rows++){
-            for (cols = 0; cols < d; cols ++){
-                m[rows][cols] = m3[rows - d][cols];
+        else if (quad == 2){
+            for (rows = 0; rows < d; rows++){
+                for (cols = d; cols < n; cols++){
+                    m[rows][cols] = mquad[rows][cols - d];
+                }
             }
-            for (cols = d; cols < n; cols++){
-                m[rows][cols] = m4[rows - d][cols - d];
+        }
+        else if (quad == 3){
+            for (rows = d; rows < n; rows++){
+                for (cols = 0; cols < d; cols ++){
+                    m[rows][cols] = mquad[rows - d][cols];
+                }
+            }
+        }
+        else {
+            for (rows = d; rows < n; rows++){
+                for (cols = d; cols < n; cols++){
+                    m[rows][cols] = mquad[rows - d][cols - d];
+                }
             }
         }
     }
@@ -211,7 +231,7 @@ int** strassen(int n, int** A, int** B){
     int d;
 
     // cutoff
-    if (n <= 32){
+    if (n <= 64){
         matrixmult(n, A, B, C);
         return C;
     }
@@ -274,6 +294,17 @@ int** strassen(int n, int** A, int** B){
 
     join(d, pad, C, C1, C2, C3, C4);
 
+    int** Cquad = makematrix(d);
+
+    Cquad = matrixadd(d, p5, matrixadd(d, p6, matrixsubtract(d, p4, p2)));
+    join(d, pad, 1, C, Cquad);
+    Cquad = matrixadd(d, p1, p2);
+    join(d, pad, 2, C, Cquad);
+    Cquad = matrixadd(d, p3, p4);
+    join(d, pad, 3, C, Cquad);
+    Cquad = matrixsubtract(d, matrixadd(d, p5, p1), matrixadd(d, p3, p7));
+    join(d, pad, 4, C, Cquad);
+
     free(p1);
     free(p2);
     free(p3);
@@ -297,6 +328,8 @@ int** strassen(int n, int** A, int** B){
     free(C3);
     free(C4);
 
+    free(Cquad);
+    
     return C;
 }
 
