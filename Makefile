@@ -1,7 +1,7 @@
 all: strassen
 
 strassen: strassen.o
-	gcc -o strassen.o -O3
+	gcc strassen.o -o strassen -O3
 
 strassen.o: strassen.c
 	gcc -Wall -c strassen.c -O3
