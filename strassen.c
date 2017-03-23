@@ -225,7 +225,7 @@ void join(int d, int pad, int quad, int** m, int** mquad){
     }
 }
 
-int** strassen(int n, int** A, int** B){
+int** strassen(int n, int** A, int** B, int** Cquad){
     int** C = makematrix(n);
     int pad;
     int d;
@@ -274,15 +274,13 @@ int** strassen(int n, int** A, int** B){
     int** p6 = makematrix(d);
     int** p7 = makematrix(d);
 
-    p1 = strassen(d, A1, matrixsubtract(d, B2, B4));
-    p2 = strassen(d, matrixadd(d, A1, A2), B4);
-    p3 = strassen(d, matrixadd(d, A3, A4), B1);
-    p4 = strassen(d, A4, matrixsubtract(d, B3, B1));
-    p5 = strassen(d, matrixadd(d, A1, A4), matrixadd(d, B1, B4));
-    p6 = strassen(d, matrixsubtract(d, A2, A4), matrixadd(d, B3, B4));
-    p7 = strassen(d, matrixsubtract(d, A1, A3), matrixadd(d, B1, B2));
-    
-    int** Cquad = makematrix(d);
+    p1 = strassen(d, A1, matrixsubtract(d, B2, B4), Cquad);
+    p2 = strassen(d, matrixadd(d, A1, A2), B4, Cquad);
+    p3 = strassen(d, matrixadd(d, A3, A4), B1, Cquad);
+    p4 = strassen(d, A4, matrixsubtract(d, B3, B1), Cquad);
+    p5 = strassen(d, matrixadd(d, A1, A4), matrixadd(d, B1, B4), Cquad);
+    p6 = strassen(d, matrixsubtract(d, A2, A4), matrixadd(d, B3, B4), Cquad);
+    p7 = strassen(d, matrixsubtract(d, A1, A3), matrixadd(d, B1, B2), Cquad);
 
     Cquad = matrixadd(d, p5, matrixadd(d, p6, matrixsubtract(d, p4, p2)));
     join(d, pad, 1, C, Cquad);
@@ -363,6 +361,7 @@ int main(int argc, char *argv[]){
     }
 
     int** C = makematrix(n);
+    int** Cquad = makematrix(n);
 
     clock_t start, finish;
     double strasstime;
@@ -372,7 +371,7 @@ int main(int argc, char *argv[]){
         printf("dim \t strassen \t conventional \n");
         for (int dim = 1; dim <= n; dim *= 2){
             start = clock();
-            C = strassen(dim, matrixA, matrixB);
+            C = strassen(dim, matrixA, matrixB, Cquad);
             finish = clock();
             strasstime = (double)(finish - start) / CLOCKS_PER_SEC;
 
