@@ -281,19 +281,7 @@ int** strassen(int n, int** A, int** B){
     p5 = strassen(d, matrixadd(d, A1, A4), matrixadd(d, B1, B4));
     p6 = strassen(d, matrixsubtract(d, A2, A4), matrixadd(d, B3, B4));
     p7 = strassen(d, matrixsubtract(d, A1, A3), matrixadd(d, B1, B2));
-
-    int** C1 = makematrix(d);
-    int** C2 = makematrix(d);
-    int** C3 = makematrix(d);
-    int** C4 = makematrix(d);
-
-    C1 = matrixadd(d, p5, matrixadd(d, p6, matrixsubtract(d, p4, p2)));
-    C2 = matrixadd(d, p1, p2);
-    C3 = matrixadd(d, p3, p4);
-    C4 = matrixsubtract(d, matrixadd(d, p5, p1), matrixadd(d, p3, p7));
-
-    join(d, pad, C, C1, C2, C3, C4);
-
+    
     int** Cquad = makematrix(d);
 
     Cquad = matrixadd(d, p5, matrixadd(d, p6, matrixsubtract(d, p4, p2)));
@@ -322,11 +310,6 @@ int** strassen(int n, int** A, int** B){
     free(B2);
     free(B3);
     free(B4);
-
-    free(C1);
-    free(C2);
-    free(C3);
-    free(C4);
 
     free(Cquad);
     
