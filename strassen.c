@@ -328,12 +328,10 @@ int main(int argc, char *argv[]){
     while (fgets(line, sizeof(line), nums) != NULL){
         length++;
     }
-
     fseek(nums, 0, SEEK_SET);
 
     int matgen[length];
     int trav = 0;
-
     while (fgets(line, sizeof(line), nums) != NULL){
         int new = atoi(line);
         matgen[trav] = new;
@@ -346,7 +344,7 @@ int main(int argc, char *argv[]){
 
     int** C = makematrix(n);
     int** Cquad = makematrix(n);
-    
+
     if (atoi(argv[1]) == 1){
         // seed for random index generator for generating random matrix from list
         time_t seconds;
@@ -354,7 +352,6 @@ int main(int argc, char *argv[]){
         srand((unsigned int) seconds);
 
         int randindex = 0;
-
         for (int rows = 0; rows < n; rows ++){
             for (int cols = 0; cols < n; cols++){
                 randindex = rand() % length;
@@ -391,7 +388,7 @@ int main(int argc, char *argv[]){
                 matrixB[rows][cols] = matgen[n * n + rows * n + cols];
             }
         }
-        matrixmult(n, matrixA, matrixB, C);
+        C = strassen(n, matrixA, matrixB, C);
         for (int i = 0; i < n; i ++) {
             int val = C[i][i];
             printf("%i\n", val);
