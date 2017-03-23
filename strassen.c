@@ -344,30 +344,30 @@ int main(int argc, char *argv[]){
     int** matrixA = makematrix(n);
     int** matrixB = makematrix(n);
 
-    // seed for random index generator for generating random matrix from list
-    time_t seconds;
-    time(&seconds);
-    srand((unsigned int) seconds);
-
-    int randindex = 0;
-
-    for (int rows = 0; rows < n; rows ++){
-        for (int cols = 0; cols < n; cols++){
-            randindex = rand() % length;
-            matrixA[rows][cols] = matgen[randindex];
-            randindex = rand() % length;
-            matrixB[rows][cols] = matgen[randindex];
-        }
-    }
-
     int** C = makematrix(n);
     int** Cquad = makematrix(n);
-
-    clock_t start, finish;
-    double strasstime;
-    double conventime;
-
+    
     if (atoi(argv[1]) == 1){
+        // seed for random index generator for generating random matrix from list
+        time_t seconds;
+        time(&seconds);
+        srand((unsigned int) seconds);
+
+        int randindex = 0;
+
+        for (int rows = 0; rows < n; rows ++){
+            for (int cols = 0; cols < n; cols++){
+                randindex = rand() % length;
+                matrixA[rows][cols] = matgen[randindex];
+                randindex = rand() % length;
+                matrixB[rows][cols] = matgen[randindex];
+            }
+        }
+
+        clock_t start, finish;
+        double strasstime;
+        double conventime;
+
         printf("dim \t strassen \t conventional \n");
         for (int dim = 1; dim <= n; dim *= 2){
             start = clock();
@@ -385,6 +385,12 @@ int main(int argc, char *argv[]){
     }
     // print diagonal entries with newlines
     else {
+        for (int rows = 0; rows < n; rows ++){
+            for (int cols = 0; cols < n; cols++){
+                matrixA[rows][cols] = matgen[rows * n + cols];
+                matrixB[rows][cols] = matgen[n * n + rows * n + cols];
+            }
+        }
         matrixmult(n, matrixA, matrixB, C);
         for (int i = 0; i < n; i ++) {
             int val = C[i][i];
