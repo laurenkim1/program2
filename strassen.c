@@ -310,7 +310,7 @@ int** strassen(int n, int** A, int** B, int** Cquad){
     free(B4);
 
     free(Cquad);
-    
+
     return C;
 }
 
@@ -385,6 +385,7 @@ int main(int argc, char *argv[]){
     }
     // print diagonal entries with newlines
     else {
+        matrixmult(n, matrixA, matrixB, C);
         for (int i = 0; i < n; i ++) {
             int val = C[i][i];
             printf("%i\n", val);
