@@ -1,3 +1,8 @@
+/*
+60977623, 50983552
+CS 124 Programming Assignment 2
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -197,7 +202,7 @@ int** strassen(int n, int** A, int** B, int** Cquad, int** p1, int** p2, int** p
     int pad;
     int d;
 
-    // cutoff
+    // crossover
     if (n <= 357){
         matrixmult(n, A, B, C);
         return C;
@@ -337,52 +342,7 @@ int main(int argc, char *argv[]){
 
     int** D = makematrix(n);
 
-/*
-    if (atoi(argv[1]) == 1){
-        // seed for random index generator for generating random matrix from list
-        time_t seconds;
-        time(&seconds);
-        srand((unsigned int) seconds);
-
-        int randindex = 0;
-        for (int rows = 0; rows < n; rows ++){
-            for (int cols = 0; cols < n; cols++){
-                randindex = rand() % length;
-                matrixA[rows][cols] = matgen[randindex];
-                randindex = rand() % length;
-                matrixB[rows][cols] = matgen[randindex];
-            }
-        }
-
-        clock_t start, finish;
-        double strasstime;
-        double conventime;
-        int compare;
-
-        printf("dim \t strassen \t conventional \t strasfaster\n");
-        for (int dim = 1; dim <= n; dim ++){
-            start = clock();
-            C = strassen(dim, matrixA, matrixB, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
-            finish = clock();
-            strasstime = (double)(finish - start) / CLOCKS_PER_SEC;
-
-            start = clock();
-            matrixmult(dim, matrixA, matrixB, C);
-            finish = clock();
-            conventime = (double)(finish - start) / CLOCKS_PER_SEC;
-
-            if (strasstime > conventime){
-                compare = 1;
-            }
-            else{
-                compare = 0;
-            }
-
-            printf("%i \t %f \t %f \t %i \n", dim, strasstime, conventime, compare);
-      }
-    }
-*/
-
+  // testing and data collection
     if (atoi(argv[1]) == 1){
         // number of random trials to average
         int trials = 10;
@@ -441,20 +401,8 @@ int main(int argc, char *argv[]){
         matrixmult(n, matrixA, matrixB, D);
 
 
-        for(int t = 0; t < n; t++){
-            for(int s = 0; s < n; s++){
-                printf("%i ", C[t][s]);
-            }
-            printf("\n");
-        }
-
-        printf("\n");
-
-        for(int k = 0; k < n; k++){
-            for(int l = 0; l < n; l++){
-                printf("%i ", D[k][l]);
-            }
-            printf("\n");
+        for(int diagonal = 0; diagonal < n; diagonal++){
+            printf("%i\n", C[diagonal][diagonal]);
         }
     }
 
@@ -481,57 +429,3 @@ int main(int argc, char *argv[]){
     free(C);
     free(Cquad);
 }
-
-
-
-/*
-  int main(void){
-      int n = 4;
-
-      int** A = makematrix(n);
-      int** B = makematrix(n);
-
-      A[0][0] = 1;
-      A[0][1] = 2;
-      A[0][2] = 3;
-      A[0][3] = 4;
-      A[1][0] = 5;
-      A[1][1] = 6;
-      A[1][2] = 7;
-      A[1][3] = 8;
-      A[2][0] = 1;
-      A[2][1] = 2;
-      A[2][2] = 3;
-      A[2][3] = 4;
-      A[3][0] = 5;
-      A[3][1] = 6;
-      A[3][2] = 7;
-      A[3][3] = 8;
-
-      B[0][0] = 1;
-      B[0][1] = 2;
-      B[0][2] = 3;
-      B[0][3] = 4;
-      B[1][0] = 5;
-      B[1][1] = 6;
-      B[1][2] = 7;
-      B[1][3] = 8;
-      B[2][0] = 1;
-      B[2][1] = 2;
-      B[2][2] = 3;
-      B[2][3] = 4;
-      B[3][0] = 5;
-      B[3][1] = 6;
-      B[3][2] = 7;
-      B[3][3] = 8;
-
-      int** C = makematrix(n);
-      matrixmult(n, A, B, C);
-
-      for(int t = 0; t < n; t++){
-          for(int s = 0; s < n; s++){
-              printf("%i \n", C[t][s]);
-          }
-      }
-  }
-  */
