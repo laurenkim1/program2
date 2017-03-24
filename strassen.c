@@ -198,7 +198,7 @@ int** strassen(int n, int** A, int** B, int** Cquad, int** p1, int** p2, int** p
     int d;
 
     // cutoff
-    if (n <= 1){
+    if (n <= 256){
         matrixmult(n, A, B, C);
         return C;
     }
@@ -232,27 +232,27 @@ int** strassen(int n, int** A, int** B, int** Cquad, int** p1, int** p2, int** p
     split2(d, pad, B, B2);
     split3(d, pad, B, B3);
     split4(d, pad, B, B4);
-    
+
     matrixsubtract(d, B2, B4, p1h);
     p1 = strassen(d, A1, p1h, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
-    
+
     matrixadd(d, A1, A2, p2h);
     p2 = strassen(d, p2h, B4, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
-    
+
     matrixadd(d, A3, A4, p3h);
     p3 = strassen(d, p3h, B1, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
-    
+
     matrixsubtract(d, B3, B1, p4h);
     p4 = strassen(d, A4, p4h, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
-    
+
     matrixadd(d, A1, A4, p5h);
     matrixadd(d, B1, B4, phelp);
     p5 = strassen(d, p5h, phelp, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
-    
+
     matrixsubtract(d, A2, A4, p6h);
     matrixadd(d, B3, B4, phelp);
     p6 = strassen(d, p6h, phelp, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
-    
+
     matrixsubtract(d, A1, A3, p7h);
     matrixadd(d, B1, B2, phelp);
     p7 = strassen(d, p7h, phelp, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
@@ -261,13 +261,13 @@ int** strassen(int n, int** A, int** B, int** Cquad, int** p1, int** p2, int** p
     matrixadd(d, p6, Cquad, p6);
     matrixadd(d, p5, p6, Cquad);
     join(d, pad, 1, C, Cquad);
-    
+
     matrixadd(d, p1, p2, Cquad);
     join(d, pad, 2, C, Cquad);
-    
+
     matrixadd(d, p3, p4, Cquad);
     join(d, pad, 3, C, Cquad);
-    
+
     matrixadd(d, p5, p1, p5);
     matrixadd(d, p3, p7, p7);
     matrixsubtract(d, p5, p7, Cquad);
@@ -313,8 +313,8 @@ int main(int argc, char *argv[]){
     // Matrices are arrays of rows
     int** matrixA = makematrix(n);
     int** matrixB = makematrix(n);
-    
-    
+
+
     int** p1 = makematrix(n);
     int** p2 = makematrix(n);
     int** p3 = makematrix(n);
@@ -331,12 +331,13 @@ int main(int argc, char *argv[]){
     int** p5h = makematrix(n);
     int** p6h = makematrix(n);
     int** p7h = makematrix(n);
-    
+
     int** C = makematrix(n);
     int** Cquad = makematrix(n);
-    
+
     int** D = makematrix(n);
 
+/*
     if (atoi(argv[1]) == 1){
         // seed for random index generator for generating random matrix from list
         time_t seconds;
@@ -359,7 +360,7 @@ int main(int argc, char *argv[]){
         int compare;
 
         printf("dim \t strassen \t conventional \t strasfaster\n");
-        for (int dim = 64; dim <= n; dim ++){
+        for (int dim = 1; dim <= n; dim ++){
             start = clock();
             C = strassen(dim, matrixA, matrixB, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
             finish = clock();
@@ -369,7 +370,7 @@ int main(int argc, char *argv[]){
             matrixmult(dim, matrixA, matrixB, C);
             finish = clock();
             conventime = (double)(finish - start) / CLOCKS_PER_SEC;
-            
+
             if (strasstime > conventime){
                 compare = 1;
             }
@@ -380,6 +381,43 @@ int main(int argc, char *argv[]){
             printf("%i \t %f \t %f \t %i \n", dim, strasstime, conventime, compare);
       }
     }
+*/
+
+    if (atoi(argv[1]) == 1){
+        // seed for random index generator for generating random matrix from list
+        time_t seconds;
+        time(&seconds);
+        srand((unsigned int) seconds);
+
+        int randindex = 0;
+        for (int rows = 0; rows < n; rows ++){
+            for (int cols = 0; cols < n; cols++){
+                randindex = rand() % length;
+                matrixA[rows][cols] = matgen[randindex];
+                randindex = rand() % length;
+                matrixB[rows][cols] = matgen[randindex];
+            }
+        }
+
+        clock_t start, finish;
+        // number of random trials to average
+        int trials = 10;
+        double strasstime;
+        // accumulate trial times
+        double strasstimesum = 0;
+
+        printf("dim\t time\n");
+        for (int i = 0; i < trials; i ++){
+            start = clock();
+            C = strassen(n, matrixA, matrixB, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
+            finish = clock();
+            strasstime = (double)(finish - start) / CLOCKS_PER_SEC;
+            strasstimesum += strasstime;
+        }
+        double strasstimeavg = strasstimesum / trials;
+        printf("%i\t %f\n", n, strasstimeavg);
+    }
+
     // print diagonal entries with newlines
     else {
         for (int rows = 0; rows < n; rows ++){
@@ -388,21 +426,21 @@ int main(int argc, char *argv[]){
                 matrixB[rows][cols] = matgen[n * n + rows * n + cols];
             }
         }
-        
+
         C = strassen(n, matrixA, matrixB, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
-        
+
         matrixmult(n, matrixA, matrixB, D);
-        
-        
+
+
         for(int t = 0; t < n; t++){
             for(int s = 0; s < n; s++){
                 printf("%i ", C[t][s]);
             }
             printf("\n");
         }
-        
+
         printf("\n");
-        
+
         for(int k = 0; k < n; k++){
             for(int l = 0; l < n; l++){
                 printf("%i ", D[k][l]);
@@ -413,7 +451,7 @@ int main(int argc, char *argv[]){
 
     free(matrixA);
     free(matrixB);
-    
+
     free(p1);
     free(p2);
     free(p3);
@@ -422,7 +460,7 @@ int main(int argc, char *argv[]){
     free(p6);
     free(p7);
     free(phelp);
-    
+
     free(p1h);
     free(p2h);
     free(p3h);
@@ -430,7 +468,7 @@ int main(int argc, char *argv[]){
     free(p5h);
     free(p6h);
     free(p7h);
-    
+
     free(C);
     free(Cquad);
 }
