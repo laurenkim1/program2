@@ -203,7 +203,7 @@ int** strassen(int n, int** A, int** B, int** Cquad, int** p1, int** p2, int** p
     int d;
 
     // crossover
-    if (n <= 357){
+    if (n <= 128){
         matrixmult(n, A, B, C);
         return C;
     }
@@ -348,7 +348,7 @@ int main(int argc, char *argv[]){
         int trials = 10;
         double strasstime;
 
-        for (int n = 714; n > 712; n = n - 1) {
+        for (int n = 1024; n > 1017; n = n - 1) {
 
             // accumulate trial times
             double strasstimesum = 0;
