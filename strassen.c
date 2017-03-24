@@ -198,7 +198,7 @@ int** strassen(int n, int** A, int** B, int** Cquad, int** p1, int** p2, int** p
     int d;
 
     // cutoff
-    if (n <= 256){
+    if (n <= 357){
         matrixmult(n, A, B, C);
         return C;
     }
@@ -387,40 +387,44 @@ int main(int argc, char *argv[]){
         // number of random trials to average
         int trials = 10;
         double strasstime;
-        // accumulate trial times
-        double strasstimesum = 0;
-        printf("dim\t time\n");
 
-        for (int i = 0; i < trials; i ++){
+        for (int n = 714; n > 712; n = n - 1) {
 
-            // seed for random index generator for generating random matrix from list
-            time_t seconds;
-            time(&seconds);
-            srand((unsigned int) seconds);
+            // accumulate trial times
+            double strasstimesum = 0;
+            printf("dim\t time\n");
 
-            int randindex = 0;
-            for (int rows = 0; rows < n; rows ++){
-                for (int cols = 0; cols < n; cols++){
-                    randindex = rand() % length;
-                    matrixA[rows][cols] = matgen[randindex];
-                    randindex = rand() % length;
-                    matrixB[rows][cols] = matgen[randindex];
+            for (int i = 0; i < trials; i ++){
+
+                // seed for random index generator for generating random matrix from list
+                time_t seconds;
+                time(&seconds);
+                srand((unsigned int) seconds);
+
+                int randindex = 0;
+                for (int rows = 0; rows < n; rows ++){
+                    for (int cols = 0; cols < n; cols++){
+                        randindex = rand() % length;
+                        matrixA[rows][cols] = matgen[randindex];
+                        randindex = rand() % length;
+                        matrixB[rows][cols] = matgen[randindex];
+                    }
                 }
+
+                clock_t start, finish;
+
+                start = clock();
+                C = strassen(n, matrixA, matrixB, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
+                finish = clock();
+
+                strasstime = (double)(finish - start) / CLOCKS_PER_SEC;
+                strasstimesum += strasstime;
             }
 
-            clock_t start, finish;
-
-            start = clock();
-            C = strassen(n, matrixA, matrixB, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
-            finish = clock();
-
-            strasstime = (double)(finish - start) / CLOCKS_PER_SEC;
-            strasstimesum += strasstime;
+            // print average time of trials
+            double strasstimeavg = strasstimesum / trials;
+            printf("%i\t %f\n", n, strasstimeavg);
         }
-
-        // print average time of trials
-        double strasstimeavg = strasstimesum / trials;
-        printf("%i\t %f\n", n, strasstimeavg);
     }
 
     // print diagonal entries with newlines
