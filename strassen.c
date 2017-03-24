@@ -359,7 +359,7 @@ int main(int argc, char *argv[]){
         int compare;
 
         printf("dim \t strassen \t conventional \t strasfaster\n");
-        for (int dim = 128; dim <= n; dim ++){
+        for (int dim = 64; dim <= n; dim ++){
             start = clock();
             C = strassen(dim, matrixA, matrixB, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
             finish = clock();
@@ -422,6 +422,17 @@ int main(int argc, char *argv[]){
     free(p6);
     free(p7);
     free(phelp);
+    
+    free(p1h);
+    free(p2h);
+    free(p3h);
+    free(p4h);
+    free(p5h);
+    free(p6h);
+    free(p7h);
+    
+    free(C);
+    free(Cquad);
 }
 
 
