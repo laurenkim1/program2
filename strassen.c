@@ -198,7 +198,7 @@ int** strassen(int n, int** A, int** B, int** Cquad){
     int d;
 
     // cutoff
-    if (n <= 128){
+    if (n <= 256){
         matrixmult(n, A, B, C);
         return C;
     }
@@ -357,7 +357,7 @@ int main(int argc, char *argv[]){
         int compare;
 
         printf("dim \t strassen \t conventional \t strasfaster\n");
-        for (int dim = 64; dim <= n; dim += 2){
+        for (int dim = 1024; dim <= n; dim ++){
             start = clock();
             C = strassen(dim, matrixA, matrixB, Cquad);
             finish = clock();
