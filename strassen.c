@@ -17,39 +17,6 @@ int** makematrix(int n){
     return matrix;
 }
 
-/*
-void matrixmult(int n, int** A, int** B, int** C){
-    int rowtrav;
-    int coltrav;
-    int trav;
-    int val = 0;
-    for (rowtrav = 0; rowtrav < n; rowtrav++){
-        for (coltrav = 0; coltrav < n; coltrav ++){
-            for (trav = 0; trav < n; trav ++){
-                val = val + A[rowtrav][trav] * B[trav][coltrav];
-            }
-            C[rowtrav][coltrav] = val;
-            val = 0;
-        }
-    }
-}
-
-void matrixmult(int n, int** A, int** B, int** C){
-    int rowtravA;
-    int rowtravB;
-    int coltravB;
-    for (rowtravA = 0; rowtravA < n; rowtravA++){
-        C[rowtravA][coltravB] = 0;
-        for (rowtravB = 0; rowtravB < n; rowtravB++){
-            for (coltravB = 0; coltravB < n; coltravB ++){
-                C[rowtravA][coltravB] = C[rowtravA][coltravB] + A[rowtravA][rowtravB] * B[rowtravB][coltravB];
-            }
-        }
-    }
-}
-
-*/
-
 void matrixmult(int n, int** A, int** B, int** C){
     int rowtravB;
     int coltravB;
@@ -231,7 +198,7 @@ int** strassen(int n, int** A, int** B, int** Cquad){
     int d;
 
     // cutoff
-    if (n <= 400){
+    if (n <= 128){
         matrixmult(n, A, B, C);
         return C;
     }
@@ -390,7 +357,7 @@ int main(int argc, char *argv[]){
         int compare;
 
         printf("dim \t strassen \t conventional \t strasfaster\n");
-        for (int dim = n-20; dim <= n; dim++){
+        for (int dim = 64; dim <= n; dim += 2){
             start = clock();
             C = strassen(dim, matrixA, matrixB, Cquad);
             finish = clock();
