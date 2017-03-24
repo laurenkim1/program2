@@ -384,36 +384,41 @@ int main(int argc, char *argv[]){
 */
 
     if (atoi(argv[1]) == 1){
-        // seed for random index generator for generating random matrix from list
-        time_t seconds;
-        time(&seconds);
-        srand((unsigned int) seconds);
-
-        int randindex = 0;
-        for (int rows = 0; rows < n; rows ++){
-            for (int cols = 0; cols < n; cols++){
-                randindex = rand() % length;
-                matrixA[rows][cols] = matgen[randindex];
-                randindex = rand() % length;
-                matrixB[rows][cols] = matgen[randindex];
-            }
-        }
-
-        clock_t start, finish;
         // number of random trials to average
         int trials = 10;
         double strasstime;
         // accumulate trial times
         double strasstimesum = 0;
-
         printf("dim\t time\n");
+
         for (int i = 0; i < trials; i ++){
+
+            // seed for random index generator for generating random matrix from list
+            time_t seconds;
+            time(&seconds);
+            srand((unsigned int) seconds);
+
+            int randindex = 0;
+            for (int rows = 0; rows < n; rows ++){
+                for (int cols = 0; cols < n; cols++){
+                    randindex = rand() % length;
+                    matrixA[rows][cols] = matgen[randindex];
+                    randindex = rand() % length;
+                    matrixB[rows][cols] = matgen[randindex];
+                }
+            }
+
+            clock_t start, finish;
+
             start = clock();
             C = strassen(n, matrixA, matrixB, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
             finish = clock();
+
             strasstime = (double)(finish - start) / CLOCKS_PER_SEC;
             strasstimesum += strasstime;
         }
+
+        // print average time of trials
         double strasstimeavg = strasstimesum / trials;
         printf("%i\t %f\n", n, strasstimeavg);
     }
