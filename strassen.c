@@ -192,13 +192,13 @@ void join(int d, int pad, int quad, int** m, int** mquad){
     }
 }
 
-int** strassen(int n, int** A, int** B, int** Cquad){
+int** strassen(int n, int** A, int** B, int** Cquad, int** p1, int** p2, int** p3, int** p4, int** p5, int** p6, int** p7, int** phelp, int** p1h, int** p2h, int** p3h, int** p4h, int** p5h, int** p6h, int** p7h){
     int** C = makematrix(n);
     int pad;
     int d;
 
     // cutoff
-    if (n <= 256){
+    if (n <= 1){
         matrixmult(n, A, B, C);
         return C;
     }
@@ -232,39 +232,30 @@ int** strassen(int n, int** A, int** B, int** Cquad){
     split2(d, pad, B, B2);
     split3(d, pad, B, B3);
     split4(d, pad, B, B4);
-
-    int** p1 = makematrix(d);
-    int** p2 = makematrix(d);
-    int** p3 = makematrix(d);
-    int** p4 = makematrix(d);
-    int** p5 = makematrix(d);
-    int** p6 = makematrix(d);
-    int** p7 = makematrix(d);
-    int** phelp = makematrix(d);
     
-    matrixsubtract(d, B2, B4, p1);
-    p1 = strassen(d, A1, p1, Cquad);
+    matrixsubtract(d, B2, B4, p1h);
+    p1 = strassen(d, A1, p1h, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
     
-    matrixadd(d, A1, A2, p2);
-    p2 = strassen(d, p2, B4, Cquad);
+    matrixadd(d, A1, A2, p2h);
+    p2 = strassen(d, p2h, B4, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
     
-    matrixadd(d, A3, A4, p3);
-    p3 = strassen(d, p3, B1, Cquad);
+    matrixadd(d, A3, A4, p3h);
+    p3 = strassen(d, p3h, B1, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
     
-    matrixsubtract(d, B3, B1, p4);
-    p4 = strassen(d, A4, p4, Cquad);
+    matrixsubtract(d, B3, B1, p4h);
+    p4 = strassen(d, A4, p4h, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
     
-    matrixadd(d, A1, A4, p5);
+    matrixadd(d, A1, A4, p5h);
     matrixadd(d, B1, B4, phelp);
-    p5 = strassen(d, p5, phelp, Cquad);
+    p5 = strassen(d, p5h, phelp, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
     
-    matrixsubtract(d, A2, A4, p6);
+    matrixsubtract(d, A2, A4, p6h);
     matrixadd(d, B3, B4, phelp);
-    p6 = strassen(d, p6, phelp, Cquad);
+    p6 = strassen(d, p6h, phelp, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
     
-    matrixsubtract(d, A1, A3, p7);
+    matrixsubtract(d, A1, A3, p7h);
     matrixadd(d, B1, B2, phelp);
-    p7 = strassen(d, p7, phelp, Cquad);
+    p7 = strassen(d, p7h, phelp, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
 
     matrixsubtract(d, p4, p2, Cquad);
     matrixadd(d, p6, Cquad, p6);
@@ -281,15 +272,6 @@ int** strassen(int n, int** A, int** B, int** Cquad){
     matrixadd(d, p3, p7, p7);
     matrixsubtract(d, p5, p7, Cquad);
     join(d, pad, 4, C, Cquad);
-
-    free(p1);
-    free(p2);
-    free(p3);
-    free(p4);
-    free(p5);
-    free(p6);
-    free(p7);
-    free(phelp);
 
     free(A1);
     free(A2);
@@ -331,9 +313,29 @@ int main(int argc, char *argv[]){
     // Matrices are arrays of rows
     int** matrixA = makematrix(n);
     int** matrixB = makematrix(n);
+    
+    
+    int** p1 = makematrix(n);
+    int** p2 = makematrix(n);
+    int** p3 = makematrix(n);
+    int** p4 = makematrix(n);
+    int** p5 = makematrix(n);
+    int** p6 = makematrix(n);
+    int** p7 = makematrix(n);
+    int** phelp = makematrix(n);
 
+    int** p1h = makematrix(n);
+    int** p2h = makematrix(n);
+    int** p3h = makematrix(n);
+    int** p4h = makematrix(n);
+    int** p5h = makematrix(n);
+    int** p6h = makematrix(n);
+    int** p7h = makematrix(n);
+    
     int** C = makematrix(n);
     int** Cquad = makematrix(n);
+    
+    int** D = makematrix(n);
 
     if (atoi(argv[1]) == 1){
         // seed for random index generator for generating random matrix from list
@@ -357,9 +359,9 @@ int main(int argc, char *argv[]){
         int compare;
 
         printf("dim \t strassen \t conventional \t strasfaster\n");
-        for (int dim = 1024; dim <= n; dim ++){
+        for (int dim = 128; dim <= n; dim ++){
             start = clock();
-            C = strassen(dim, matrixA, matrixB, Cquad);
+            C = strassen(dim, matrixA, matrixB, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
             finish = clock();
             strasstime = (double)(finish - start) / CLOCKS_PER_SEC;
 
@@ -386,15 +388,40 @@ int main(int argc, char *argv[]){
                 matrixB[rows][cols] = matgen[n * n + rows * n + cols];
             }
         }
-        C = strassen(n, matrixA, matrixB, C);
-        for (int i = 0; i < n; i ++) {
-            int val = C[i][i];
-            printf("%i\n", val);
+        
+        C = strassen(n, matrixA, matrixB, Cquad, p1, p2, p3, p4, p5, p6, p7, phelp, p1h, p2h, p3h, p4h, p5h, p6h, p7h);
+        
+        matrixmult(n, matrixA, matrixB, D);
+        
+        
+        for(int t = 0; t < n; t++){
+            for(int s = 0; s < n; s++){
+                printf("%i ", C[t][s]);
+            }
+            printf("\n");
+        }
+        
+        printf("\n");
+        
+        for(int k = 0; k < n; k++){
+            for(int l = 0; l < n; l++){
+                printf("%i ", D[k][l]);
+            }
+            printf("\n");
         }
     }
 
     free(matrixA);
     free(matrixB);
+    
+    free(p1);
+    free(p2);
+    free(p3);
+    free(p4);
+    free(p5);
+    free(p6);
+    free(p7);
+    free(phelp);
 }
 
 
